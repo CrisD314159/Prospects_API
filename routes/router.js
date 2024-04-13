@@ -15,6 +15,7 @@ export const CreateRouter = ({ model }) => {
   routes.get('/flats/:id', controller.getFlatById)
   routes.get('/assessors', controller.getAssessor)
   routes.get('/assessors/:id', controller.getAssessorById)
+  routes.get('/complexes', controller.getComplex)
 
   return routes
 }

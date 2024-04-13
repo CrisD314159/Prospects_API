@@ -6,7 +6,7 @@ import { ProspectModel } from './model/model.js'
 
 const app = express()
 
-const port = process.env.PORT ?? 3001
+const port = process.env.PORT ?? 3003
 
 app.disable('x-powered-by')
 

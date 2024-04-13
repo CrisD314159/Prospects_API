@@ -6,7 +6,8 @@ const schema = z.object({
   telCliente: z.number(),
   emailCliente: z.string().email(),
   idInmueble: z.string(),
-  idAsesor: z.string()
+  idAsesor: z.string(),
+  idConjunto: z.string()
 
 })
 
@@ -15,7 +16,8 @@ const schemaPut = z.object({
   nombreProspecto: z.string().max(40),
   telCliente: z.number(),
   emailCliente: z.string().email(),
-  idInmueble: z.string()
+  idInmueble: z.string(),
+  idConjunto: z.string()
 
 })
 

@@ -22,9 +22,9 @@ export class ApiController {
 
   // Creates a prospect
   createProspect = async (req, res) => {
-    const { nombreProspecto, nombreCliente, telCliente, emailCliente, observacion, idInmueble, idAsesor } = req.body
+    const { nombreProspecto, nombreCliente, telCliente, emailCliente, observacion, idInmueble, idAsesor, idConjunto } = req.body
 
-    const verifiedProspect = verifyObject({ nombreCliente, nombreProspecto, telCliente, emailCliente, idInmueble, idAsesor })
+    const verifiedProspect = verifyObject({ nombreCliente, nombreProspecto, telCliente, emailCliente, idInmueble, idAsesor, idConjunto })
     if (verifiedProspect.error) {
       throw new Error(verifiedProspect.error)
     }
@@ -45,10 +45,10 @@ export class ApiController {
 
   // Updates a prospect using its id
   updateProspect = async (req, res) => {
-    const { nombreProspecto, nombreCliente, telCliente, emailCliente, observacion, idInmueble } = req.body
+    const { nombreProspecto, nombreCliente, telCliente, emailCliente, observacion, idInmueble, idConjunto } = req.body
     const { id } = req.params
 
-    const verifyFields = verifyObjectPut({ nombreProspecto, nombreCliente, telCliente, emailCliente, idInmueble })
+    const verifyFields = verifyObjectPut({ nombreProspecto, nombreCliente, telCliente, emailCliente, idInmueble, idConjunto })
     if (verifyFields.error) {
       throw new Error(verifyFields.error)
     }
@@ -75,8 +75,14 @@ export class ApiController {
   // gets all the flats available
   getFlats = async (req, res) => {
     const flats = await this.model.getFlats()
-    if (flats.length === null) res.status(404)
+    if (flats.length === 0) res.status(404)
     res.json(flats)
+  }
+
+  getComplex = async (req, res) => {
+    const complexes = await this.model.getComplex()
+    if (complexes.length === 0) res.status(404)
+    res.json(complexes)
   }
 
   // gets a flt by its id
