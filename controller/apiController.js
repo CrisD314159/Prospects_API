@@ -106,4 +106,11 @@ export class ApiController {
     if (assessor === null) res.status(404)
     res.json(assessor)
   }
+
+  getUserById = async (req, res) => {
+    const { id } = req.params
+    const user = await this.model.getUserById({ id })
+    if (user === null) res.status(404)
+    res.json(user)
+  }
 }

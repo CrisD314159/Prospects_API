@@ -139,4 +139,13 @@ export class ProspectModel {
       return null
     }
   }
+
+  static getUserById = async ({ id }) => {
+    const [user] = await db`SELECT * FROM asesores WHERE usuario = ${id};`
+    if (user) {
+      return user
+    } else {
+      return null
+    }
+  }
 }
