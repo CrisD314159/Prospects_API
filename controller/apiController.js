@@ -1,5 +1,4 @@
 import { verifyObject, verifyObjectPut } from './zod-schemas/zod-schema.js'
-import { randomUUID } from 'node:crypto'
 export class ApiController {
   constructor ({ model }) {
     this.model = model
@@ -22,14 +21,13 @@ export class ApiController {
 
   // Creates a prospect
   createProspect = async (req, res) => {
-    const { nombreProspecto, nombreCliente, telCliente, emailCliente, observacion, idInmueble, idAsesor, idConjunto } = req.body
+    const { id, nombreProspecto, nombreCliente, telCliente, emailCliente, observacion, idInmueble, idAsesor, idConjunto } = req.body
 
-    const verifiedProspect = verifyObject({ nombreCliente, nombreProspecto, telCliente, emailCliente, idInmueble, idAsesor, idConjunto })
+    const verifiedProspect = verifyObject({ id, nombreCliente, nombreProspecto, telCliente, emailCliente, idInmueble, idAsesor, idConjunto })
     if (verifiedProspect.error) {
       throw new Error(verifiedProspect.error)
     }
     const prospect = {
-      id: randomUUID(),
       ...verifiedProspect.data,
       observacion
 

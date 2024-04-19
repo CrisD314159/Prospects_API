@@ -1,6 +1,7 @@
 import { z } from 'zod'
 
 const schema = z.object({
+  id: z.string(),
   nombreCliente: z.string().max(40),
   nombreProspecto: z.string().max(40),
   telCliente: z.number(),
@@ -12,6 +13,7 @@ const schema = z.object({
 })
 
 const schemaPut = z.object({
+  id: z.string(),
   nombreCliente: z.string().max(40),
   nombreProspecto: z.string().max(40),
   telCliente: z.number(),

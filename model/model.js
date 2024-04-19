@@ -48,6 +48,10 @@ export class ProspectModel {
 
   static createProspect = async ({ prospect }) => {
     const { id, nombreProspecto, nombreCliente, telCliente, emailCliente, observacion, idInmueble, idAsesor, idConjunto } = prospect
+    const [prospecto] = await db`SELECT * FROM prospectos WHERE id = ${id};`
+    if (prospecto) {
+      throw new Error('Prospect already exists')
+    }
     try {
       const query = await db.begin(async db => {
         await db`
