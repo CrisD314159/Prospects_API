@@ -1,11 +1,16 @@
 import postgres from 'postgres'
 
+import dotenv from 'dotenv'
+
+// Cargar el archivo .env correspondiente
+dotenv.config({ path: 'variables_db.env' })
+
 const db = postgres({
-  host: process.env.PGHOST,
-  database: process.env.PGDATABASE,
-  username: process.env.PGUSER,
-  password: process.env.PGPASSWORD,
-  port: 5432,
+  host: process.env.PGHOST_DEV,
+  database: process.env.PGDATABASE_DEV,
+  username: process.env.PGUSER_DEV,
+  password: process.env.PGPASSWORD_DEV,
+  port: process.env.PGPORT_DEV,
   ssl: 'require',
   connection: {
     options: `project=${process.env.ENDPOINT_ID}`
