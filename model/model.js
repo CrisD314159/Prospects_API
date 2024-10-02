@@ -1,26 +1,27 @@
 import postgres from 'postgres'
+import dotenv from 'dotenv';
+
+// Cargar las variables de entorno desde el archivo .env
+dotenv.config();
 
 const db = postgres({
   host: process.env.PGHOST,
   database: process.env.PGDATABASE,
-  username: process.env.PGUSER,
-  password: process.env.PGPASSWORD,
+  username: "camu",
+  password: "1234",
   port: 5432,
-  ssl: 'require',
-  connection: {
-    options: `project=${process.env.ENDPOINT_ID}`
-  }
+  ssl: process.env.PGSSL === 'true' ? { rejectUnauthorized: false } : false,
 })
 
 export class ProspectModel {
   static getProspects = async () => {
     const query = await db`
-    SELECT prospectos.id, nombreCliente, telefonoCliente, correoCliente, observacion, Inmuebles.nombre AS nombreApto, Inmuebles.torre AS torre, Inmuebles.descripcion AS descApto,
-    Conjunto.nombre as nombreConjunto, Asesores.nombre AS nombreAsesor, Asesores.telefono AS telAsesor, Asesores.email AS emailAsesor
+    SELECT prospectos.id, nombreCliente, telefonoCliente, emailCliente, observacion, Inmuebles.nombre AS nombreApto, Inmuebles.torre AS torre, Inmuebles.descripcion AS descApto,
+    Conjunto.nombre as nombreConjunto, Usuario.nombre AS nombreAsesor, Usuario.telefono AS telAsesor, Usuario.email AS emailAsesor
     FROM prospectos
-    JOIN inmuebles ON prospectos.idinmueble = inmuebles.nombre
-    JOIN Asesores ON prospectos.idasesor = Asesores.id
-    JOIN Conjunto ON prospectos.idconjunto = Conjunto.id;
+    JOIN inmuebles ON prospectos.inmueble = inmuebles.nombre
+    JOIN Usuario ON prospectos.asesor = Usuario.id
+    JOIN Conjunto ON prospectos.conjunto = Conjunto.id;
     `
     if (query.length > 0) {
       return query
@@ -31,12 +32,12 @@ export class ProspectModel {
 
   static getProspectById = async ({ id }) => {
     const [query] = await db`
-    SELECT prospectos.id AS id, nombreCliente, telefonoCliente, correoCliente, observacion, Inmuebles.nombre AS nombreApto, Inmuebles.torre AS torre, Inmuebles.descripcion AS descApto,
-    Conjunto.nombre as nombreConjunto, Asesores.nombre AS nombreAsesor, Asesores.telefono AS telAsesor, Asesores.email AS emailAsesor
+    SELECT prospectos.id AS id, nombreCliente, telefonoCliente, emailCliente, observacion, Inmuebles.nombre AS nombreApto, Inmuebles.torre AS torre, Inmuebles.descripcion AS descApto,
+    Conjunto.nombre as nombreConjunto, Usuario.nombre AS nombreAsesor, Usuario.telefono AS telAsesor, Usuario.email AS emailAsesor
     FROM prospectos 
-    JOIN inmuebles ON prospectos.idinmueble = inmuebles.nombre
-    JOIN Asesores ON prospectos.idasesor = Asesores.id
-    JOIN Conjunto ON prospectos.idconjunto = Conjunto.id
+    JOIN inmuebles ON prospectos.inmueble = inmuebles.nombre
+    JOIN Usuario ON prospectos.asesor = Usuario.id
+    JOIN Conjunto ON prospectos.conjunto = Conjunto.id
     WHERE prospectos.id = ${id};
     `
     if (query) {
@@ -55,7 +56,7 @@ export class ProspectModel {
     try {
       const query = await db.begin(async db => {
         await db`
-        INSERT INTO prospectos(id, nombre, nombrecliente, telefonocliente, correocliente, observacion, idInmueble, idAsesor, idConjunto)
+        INSERT INTO prospectos(id, nombre, nombrecliente, telefonocliente, emailcliente, observacion, inmueble, asesor, conjunto)
         VALUES(${id}, ${nombreProspecto}, ${nombreCliente}, ${telCliente}, ${emailCliente}, ${observacion}, ${idInmueble}, ${idAsesor}, ${idConjunto});
           `
         return true
@@ -73,7 +74,7 @@ export class ProspectModel {
       const query = await db.begin(async db => {
         await db`
          UPDATE prospectos
-         SET nombre = ${nombreProspecto}, nombreCliente = ${nombreCliente} , telefonoCliente = ${telCliente}, correoCliente = ${emailCliente}, observacion = ${observacion}, idInmueble = ${idInmueble}, idConjunto = ${idConjunto}
+         SET nombre = ${nombreProspecto}, nombreCliente = ${nombreCliente} , telefonoCliente = ${telCliente}, emailCliente = ${emailCliente}, observacion = ${observacion}, idInmueble = ${idInmueble}, idConjunto = ${idConjunto}
          WHERE id = ${id};
         `
         return true
@@ -118,7 +119,7 @@ export class ProspectModel {
   }
 
   static getAssessor = async () => {
-    const assessors = await db`SELECT * FROM asesores;`
+    const assessors = await db`SELECT * FROM Usuario;`
     if (assessors.length > 0) {
       return assessors
     } else {
@@ -127,7 +128,7 @@ export class ProspectModel {
   }
 
   static getAssessorById = async ({ id }) => {
-    const [assessor] = await db`SELECT * FROM asesores WHERE id = ${id};`
+    const [assessor] = await db`SELECT * FROM Usuario WHERE id = ${id};`
     if (assessor) {
       return assessor
     } else {
@@ -145,7 +146,7 @@ export class ProspectModel {
   }
 
   static getUserById = async ({ id }) => {
-    const [user] = await db`SELECT * FROM Administrador WHERE usuario = ${id};`
+    const [user] = await db`SELECT * FROM Usuario WHERE EsAdministrador = true and usuario = ${id};`
     if (user) {
       return user
     } else {
