@@ -1,5 +1,8 @@
+import { generateProspectsReport } from '../services/reportGenerator.js';
 import { verifyObject, verifyObjectPut } from './zod-schemas/zod-schema.js'
+
 export class ApiController {
+
   constructor ({ model }) {
     this.model = model
   }
@@ -17,6 +20,30 @@ export class ApiController {
     const prospect = await this.model.getProspectById({ id })
     if (prospect === null) res.status(404)
     res.json(prospect)
+  }
+
+  // Generate prospect's report
+  postProspectsReport = async (req, res) => {
+    console.log("Generando reporte...");
+
+    try {
+      // Obtener todos los prospectos
+      const prospects = await this.model.getProspects();
+
+      if (!prospects) {
+        return res.status(404).json({ message: "No se encontraron prospectos" });
+      }
+
+      // Generar el PDF usando la función del archivo externo
+      const reportPath = await generateProspectsReport(prospects);
+
+      // Responder al cliente cuando se haya generado el reporte
+      res.json({ message: "Reporte generado exitosamente", path: reportPath });
+
+    } catch (error) {
+      console.error("Error al generar el reporte:", error);
+      res.status(500).json({ message: "Error al generar el reporte" });
+    }
   }
 
   // Creates a prospect

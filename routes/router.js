@@ -9,6 +9,7 @@ export const CreateRouter = ({ model }) => {
   routes.get('/prospects', controller.getProspects)
   routes.get('/prospects/:id', controller.getProspectById)
   routes.post('/prospects', controller.createProspect)
+  routes.post('/report', controller.postProspectsReport)
   routes.put('/prospects/:id', controller.updateProspect)
   routes.delete('/prospects/:id', controller.deleteProspect)
   routes.get('/flats', controller.getFlats)
