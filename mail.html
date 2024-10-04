@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Email</title>
+    <style>
+      body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f4f4f9;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      }
+      .email-container {
+        background-color: #fffafa;
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        max-width: 600px;
+        width: 100%;
+        border: 2px solid #ebe8e8;
+      }
+      h1 {
+        font-size: 1.7rem;
+        color: #113939;
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      p {
+        font-size: 1rem;
+        color: #666666;
+        line-height: 1.6;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+      .stripe-container {
+        margin: 30px 0;
+        display: flex;
+        justify-content: center;
+      }
+      .stripe {
+        height: 10px;
+        width: 100%;
+        background-color: #113939;
+        margin-bottom: 20px;
+      }
+      .footer {
+        font-size: 0.8rem;
+        color: #999999;
+        text-align: center;
+        border-top: 1px solid #ebe8e8;
+        padding-top: 20px;
+        margin-top: 40px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="email-container">
+      <h1>¡Hola!</h1>
+      <p>
+        Te agradecemos por utilizar nuestro servicio. Hemos generado el archivo que solicitaste. 
+        Revisa el archivo adjunto en tu correo.
+      </p>
+
+      <!-- Franja decorativa -->
+      <div class="stripe-container">
+        <div class="stripe"></div>
+      </div>
+
+      <div class="footer">
+        <p>Este es un correo automático, por favor no respondas.</p>
+      </div>
+    </div>
+  </body>
+</html>

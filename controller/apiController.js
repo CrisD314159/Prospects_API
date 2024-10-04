@@ -1,4 +1,5 @@
 import { generateProspectsReport } from '../services/reportGenerator.js';
+import { sendEmailWithAttachment } from '../services/smtp.js';
 import { verifyObject, verifyObjectPut } from './zod-schemas/zod-schema.js'
 
 export class ApiController {
@@ -36,6 +37,7 @@ export class ApiController {
 
       // Generar el PDF usando la función del archivo externo
       const reportPath = await generateProspectsReport(prospects);
+      await sendEmailWithAttachment('prueba@prueba.com');
 
       // Responder al cliente cuando se haya generado el reporte
       res.json({ message: "Reporte generado exitosamente", path: reportPath });

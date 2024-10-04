@@ -24,9 +24,6 @@ export const generateProspectsReport = async (prospects) => {
   try {
     // Asegúrate de que jsreport esté inicializado antes de generar el reporte
     await initializeJsReport();
-
-    console.log(prospects[0]);
-
     // Crear la plantilla del informe
     const reportTemplate = `
       <html>
