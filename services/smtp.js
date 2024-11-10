@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-export async function sendEmailWithAttachment(email) {
+export async function sendEmailWithAttachment(email, id) {
   // Configura el transportador SMTP
   let transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
@@ -19,8 +19,8 @@ export async function sendEmailWithAttachment(email) {
   const htmlContent = fs.readFileSync('mail.html', 'utf8');
 
   // Lee el archivo que deseas enviar
-  const filePath = 'reports/prospects-report.pdf'; // Cambia esto por la ruta de tu archivo
-  const fileName = 'prospects-report.pdf'; // Nombre que tendrá el archivo adjunto
+  const filePath = 'reports/prospects-report-' + id + '.pdf'; // Cambia esto por la ruta de tu archivo
+  const fileName = 'prospects-report-' + id + '.pdf'; // Nombre que tendrá el archivo adjunto
 
   // Configura el correo
   let mailOptions = {

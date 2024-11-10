@@ -1,6 +1,10 @@
 import { generateProspectsReport } from '../services/reportGenerator.js';
 import { sendEmailWithAttachment } from '../services/smtp.js';
 import { verifyObject, verifyObjectPut } from './zod-schemas/zod-schema.js'
+import NodeCache from 'node-cache';
+
+// Crear una instancia de caché con TTL de 5 minutos (300 segundos)
+const cache = new NodeCache({ stdTTL: 0 });
 
 export class ApiController {
 
@@ -26,6 +30,8 @@ export class ApiController {
   // Generate prospect's report
   postProspectsReport = async (req, res) => {
     console.log("Generando reporte...");
+    let id = cache.get('userId')
+    let mail = (await this.model.getUserById({ id }))["email"]
 
     try {
       // Obtener todos los prospectos
@@ -36,8 +42,8 @@ export class ApiController {
       }
 
       // Generar el PDF usando la función del archivo externo
-      const reportPath = await generateProspectsReport(prospects);
-      await sendEmailWithAttachment('prueba@prueba.com');
+      const reportPath = await generateProspectsReport(prospects, id);
+      await sendEmailWithAttachment(mail, id);
 
       // Responder al cliente cuando se haya generado el reporte
       res.json({ message: "Reporte generado exitosamente", path: reportPath });
@@ -110,6 +116,12 @@ export class ApiController {
     const complexes = await this.model.getComplex()
     if (complexes.length === 0) res.status(404)
     res.json(complexes)
+  }
+
+  postUserId = (req, res) => {
+    const {id} = req.body
+    cache.set('userId', id)
+    res.status(200).json({ message: "User ID cached successfully" })
   }
 
   // gets a flt by its id

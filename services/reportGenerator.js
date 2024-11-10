@@ -20,7 +20,7 @@ const initializeJsReport = async () => {
 };
 
 // Función para generar el reporte
-export const generateProspectsReport = async (prospects) => {
+export const generateProspectsReport = async (prospects, id) => {
   try {
     // Asegúrate de que jsreport esté inicializado antes de generar el reporte
     await initializeJsReport();
@@ -115,7 +115,7 @@ export const generateProspectsReport = async (prospects) => {
     const __dirname = path.dirname(__filename);
 
     // Ahora puedes usar __dirname en tu ruta
-    const reportPath = path.join(__dirname, '..', 'reports', 'prospects-report.pdf');
+    const reportPath = path.join(__dirname, '..', 'reports', 'prospects-report-' + id + '.pdf');
 
     // Guardar el PDF en el sistema de archivos
     fs.writeFileSync(reportPath, report.content);
