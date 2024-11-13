@@ -15,9 +15,21 @@ export const CreateRouter = ({ model }) => {
   routes.get('/flats', controller.getFlats)
   routes.get('/flats/:id', controller.getFlatById)
   routes.get('/assessors', controller.getAssessor)
+  routes.put('/assessors', controller.updateUser)
   routes.get('/assessors/:id', controller.getAssessorById)
+  routes.get('/assessors/edit/:id', controller.getAssessorById)
   routes.get('/complexes', controller.getComplex)
-  routes.get('/users/:id', controller.getUserById)
+  routes.get('/users', controller.getAssessor);
+  routes.delete('/users/:id', controller.deleteUser);
+  routes.post('/users', controller.createUser);
+  routes.put('/users/:id',controller.updateUser);
+  routes.put('/users/edit/:id',controller.updateUser);
+  routes.get('/users', controller.getAssessor);
+  routes.delete('/users/:id', controller.deleteUser);
+  routes.post('/users', controller.createUser);
+  routes.put('/users/:id',controller.updateUser);
+  routes.put('/users/edit/:id',controller.updateUser);
+  routes.get('/users/:id', controller.getUserById);;
   routes.post('/userId', controller.postUserId)
 
   return routes

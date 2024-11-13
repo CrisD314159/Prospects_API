@@ -34,7 +34,7 @@ export class ProspectModel {
     const [query] = await db`
     SELECT prospectos.id AS id, nombreCliente, telefonoCliente, emailCliente, observacion, Inmuebles.nombre AS nombreApto, Inmuebles.torre AS torre, Inmuebles.descripcion AS descApto,
     Conjunto.nombre as nombreConjunto, Usuario.nombre AS nombreAsesor, Usuario.telefono AS telAsesor, Usuario.email AS emailAsesor
-    FROM prospectos 
+    FROM prospectos
     JOIN inmuebles ON prospectos.inmueble = inmuebles.nombre
     JOIN Usuario ON prospectos.asesor = Usuario.id
     JOIN Conjunto ON prospectos.conjunto = Conjunto.id
@@ -144,6 +144,73 @@ export class ProspectModel {
       return null
     }
   }
+
+  static getUsers = async () => {
+    console.log("Fetching users from database...");
+    const users = await db`SELECT * FROM usuario;`;
+    console.log("Users fetched:", users);
+    if (users.length > 0) {
+        return users;
+    } else {
+        return null;
+    }
+};
+
+  static deleteUser = async ({ id }) => {
+  try {
+      const query = await db.begin(async (db) => {
+          await db`
+          DELETE FROM usuario WHERE id = ${id}
+          `;
+          return true;
+      });
+      return query;
+  } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  static updateUser = async (user) => {
+    const { id, username, nombre, telefono, email } = user;
+    try {
+      const query = await db.begin(async (db) => {
+        await db`
+        UPDATE usuario
+        SET usuario = ${username}, nombre = ${nombre}, telefono = ${telefono}, email = ${email}
+        WHERE id = ${id};
+        `;
+        return true;
+      });
+      return query;
+    } catch (error) {
+      throw new Error(error);
+    }
+  };
+
+
+  static createUser = async ({ user }) => {
+    const { id, username, password, nombre, telefono,email } = user;
+    const [existingUser] = await db`SELECT * FROM usuario WHERE id = ${id};`;
+    if (existingUser) {
+      return { success: false, message: 'El usuario ya existe' }; // Retorna un objeto con mensaje
+  }
+
+    try {
+      const query = await db.begin(async db => {
+        await db`
+        INSERT INTO usuario (id,usuario,password,nombre, telefono, email,esadministrador)
+        VALUES (${id}, ${username}, ${password}, ${nombre}, ${telefono},${email},false);
+        `;
+        return true;
+      });
+
+      return { success: true, message: 'Usuario creado con éxito' }; // Mensaje de éxito
+    } catch (error) {
+      console.error('Error en la creación de usuario:', error);
+        return { success: false, message: 'Error al crear el usuario' };
+    }
+  };
+
 
   static getUserById = async ({ id }) => {
     const [user] = await db`SELECT * FROM Usuario WHERE usuario = ${id};`

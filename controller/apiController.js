@@ -1,6 +1,7 @@
 import { generateProspectsReport } from '../services/reportGenerator.js';
 import { sendEmailWithAttachment } from '../services/smtp.js';
-import { verifyObject, verifyObjectPut } from './zod-schemas/zod-schema.js'
+import { verifyUserEditObject} from './zod-schemas/zod-schema.js'
+import { verifyUserObject} from './zod-schemas/zod-schema.js'
 import NodeCache from 'node-cache';
 
 // Crear una instancia de caché con TTL de 5 minutos (300 segundos)
@@ -12,7 +13,7 @@ export class ApiController {
     this.model = model
   }
 
-  // Gets all the prospects available
+  // Gets all the prospects availabley
   getProspects = async (req, res) => {
     const prospects = await this.model.getProspects()
     if (prospects === null) res.status(404)
@@ -146,6 +147,83 @@ export class ApiController {
     res.json(assessor)
   }
 
+  async getUsers(req, res) {
+    try {
+        const users = await this.model.getUsers(); // Aquí debería ser el método correcto
+        if (users) {
+            return res.status(200).json(users);
+        } else {
+            return res.status(404).json({ message: 'No users found' });
+        }
+    } catch (error) {
+        console.error('Error fetching users:', error);
+        return res.status(500).json({ error: 'Error retrieving users' });
+    }
+}
+
+  deleteUser = async (req, res) => {
+    const { id } = req.params;
+    const response = await this.model.deleteUser({ id });
+    if (response) {
+        res.json({ message: 'User deleted' });
+    } else {
+        res.status(400).json({ message: 'User not found or deletion failed' });
+    }
+  }
+
+  //Creates a user
+  //Creates a user
+createUser = async (req, res) => {
+  const { id, username, password, nombre, telefono, email } = req.body;
+
+  const verifiedUser = verifyUserObject({ id, username, password, nombre, telefono, email });
+  if (verifiedUser.error) {
+    return res.status(400).json({ message: verifiedUser.error });
+  }
+
+  try {
+    // Primero verifica si el usuario ya existe
+    const existingUser = await this.model.getUserById({ id });
+    if (existingUser) {
+      return res.status(409).json({ message: 'El usuario ya existe' });
+    }
+
+    const user = { ...verifiedUser.data };
+    const response = await this.model.createUser({ user });
+    if (response) {
+      res.json({ message: 'Usuario creado' });
+    } else {
+      res.status(400).json({ message: 'Fallo al crear el usuario' });
+    }
+  } catch (error) {
+    console.error('Error creando usuario:', error);
+    res.status(500).json({ message: 'Error creando usuario' });
+  }
+};
+updateUser = async (req, res) => {
+  console.log("Req: "+req.body.user)
+  const { username, nombre, telefono, email } = req.body;
+  const { id } = req.params;
+
+  const verifiedUser = verifyUserEditObject({ id, username, nombre, telefono, email });
+  console.log(verifiedUser)
+  if (verifiedUser.error) {
+    return res.status(400).json({ message: verifiedUser.error });
+  }
+
+  const user = {
+    id,
+    ...verifiedUser.data,
+  };
+
+  const response = await this.model.updateUser(user);
+  
+  if (response) {
+    return res.json({ message: 'Usuario actualizado' });
+  } else {
+    return res.status(400).json({ message: 'Fallo al actualizar el usuario' });
+  }
+}
   getUserById = async (req, res) => {
     const { id } = req.params
     const user = await this.model.getUserById({ id })
